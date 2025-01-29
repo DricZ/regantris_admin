@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transactions extends Model
 {
@@ -26,9 +27,9 @@ class Transactions extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function hotels(): BelongsTo
+    public function hotel(): BelongsTo
     {
-        return $this->belongsTo(Hotels::class);
+        return $this->belongsTo(Hotels::class, 'hotel_id');
     }
 
     /**
@@ -36,8 +37,8 @@ class Transactions extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function members(): BelongsTo
+    public function member(): BelongsTo
     {
-        return $this->belongsTo(Members::class);
+        return $this->belongsTo(Members::class, 'member_id');
     }
 }

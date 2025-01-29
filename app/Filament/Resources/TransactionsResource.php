@@ -23,18 +23,26 @@ class TransactionsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('member_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('hotel_id')
-                    ->tel()
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('type'),
+                Forms\Components\Select::make('member_id')
+                    ->relationship('member', 'name')
+                    ->required(),
+                Forms\Components\Select::make('hotel_id')
+                    ->relationship('hotel', 'name')
+                    ->required(),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'room' => 'Room',
+                        'fnb' => 'Resto',
+                        'laundry' => 'Laundry',
+                        'transport' => 'Transport',
+                        'spa' => 'Spa',
+                        'other' => 'Other',
+                    ])
+                    ->required(),
                 Forms\Components\TextInput::make('nominal')
                     ->required()
                     ->numeric()
-                    ->default(0),
+                    ->placeholder(0),
             ]);
     }
 
@@ -42,12 +50,14 @@ class TransactionsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('member_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('hotel_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('member.name')
+                    ->label('Member')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('hotel.name')
+                    ->label('Hotel')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('nominal')
                     ->numeric()
