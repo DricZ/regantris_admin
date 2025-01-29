@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class hotels extends Model
+class Hotels extends Model
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
