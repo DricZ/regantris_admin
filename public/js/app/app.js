@@ -1,5 +1,3 @@
-import './bootstrap';
-
 import AutoNumeric from 'autonumeric';
 
 document.addEventListener('DOMContentLoaded', () => {
