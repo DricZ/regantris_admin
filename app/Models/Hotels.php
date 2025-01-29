@@ -32,4 +32,9 @@ class Hotels extends Model
     {
         return $this->hasMany(Transactions::class, 'hotel_id', 'id');
     }
+
+    public function users(): HasMany
+    {
+        return $this->HasMany(User::class, 'hotel_id', 'id');
+    }
 }

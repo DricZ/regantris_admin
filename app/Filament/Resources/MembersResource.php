@@ -35,7 +35,10 @@ class MembersResource extends Resource
             (floatval(str_replace(',', '', $get('nominal_spa'))) ?? 0) +
             (floatval(str_replace(',', '', $get('nominal_other'))) ?? 0);
         $set('total_nominal', $total);
-        $set('poin', floor($total / 100));
+
+        $point = $total / 100000;
+        $set('poin', floor($point));
+        $set('reward', ceil($point * 100));
 
     }
 
@@ -56,7 +59,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_room')
                 ->label('Nominal Room')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->live()
@@ -67,7 +69,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_resto')
                 ->label('Nominal Resto')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -78,7 +79,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_laundry')
                 ->label('Nominal Laundry')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -89,7 +89,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_transport')
                 ->label('Nominal Transport')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -100,7 +99,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_spa')
                 ->label('Nominal Spa')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -111,7 +109,6 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('nominal_other')
                 ->label('Nominal Other')
-                ->required()
                 ->placeholder('0')
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -129,6 +126,12 @@ class MembersResource extends Resource
 
             Forms\Components\TextInput::make('poin')
                 ->label('Poin')
+                ->required()
+                ->readOnly()
+                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2),
+
+            Forms\Components\TextInput::make(name: 'reward')
+                ->label(label: 'reward')
                 ->required()
                 ->readOnly()
                 ->prefix('Rp. ')
@@ -157,26 +160,46 @@ class MembersResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nominal_room')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_resto')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_laundry')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_transport')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_spa')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_other')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_nominal')
                     ->numeric()
+                    ->prefix('Rp. ')
+                    ->default(0)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('poin')
+                    Tables\Columns\TextColumn::make('poin')
+                    ->default(0)
+                    ->numeric()
+                    ->sortable(),
+                    Tables\Columns\TextColumn::make('reward')
+                    ->default(0)
+                    ->prefix('Rp. ')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tier'),

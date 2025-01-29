@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Members extends Model
 {
@@ -39,6 +40,10 @@ class Members extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transactions::class, 'member_id', 'id');
+    }
+
+    public function tier($points){
+
     }
 
 }
