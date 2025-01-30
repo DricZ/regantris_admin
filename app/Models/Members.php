@@ -33,6 +33,34 @@ class Members extends Model
         ->dontSubmitEmptyLogs();
     }
 
+    public static function getTierOptions($total){
+        if($total < 20000000){
+            return [
+                'id' => 0,
+                'name' => "Urban",
+                'rate' => .05
+            ];
+        }elseif($total >= 20000000 && $total < 35000000){
+            return [
+                'id' => 1,
+                'name' => "City Slicker",
+                'rate' => .1
+            ];
+        }elseif($total >= 35000000 && $total < 40000000){
+            return [
+                'id' => 2,
+                'name' => "Metropolis",
+                'rate' => .15
+            ];
+        }else{
+            return [
+                'id' => 3,
+                'name' => "Metropolis",
+                'rate' => .2
+            ];
+        }
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {

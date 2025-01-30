@@ -12,16 +12,35 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'Transactions';
+    protected static string $relationship = 'transactions';
 
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('Hotel Transactions')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        ->schema([
+            Forms\Components\Select::make('member_id')
+                ->relationship('member', 'name')
+                ->required(),
+            Forms\Components\Select::make('hotel_id')
+                ->relationship('hotel', 'name')
+                ->default($this->getOwnerRecord()->id)
+                ->disabled()
+                ->required(),
+            Forms\Components\Select::make('type')
+                ->options([
+                    'room' => 'Room',
+                    'fnb' => 'Resto',
+                    'laundry' => 'Laundry',
+                    'transport' => 'Transport',
+                    'spa' => 'Spa',
+                    'other' => 'Other',
+                ])
+                ->required(),
+            Forms\Components\TextInput::make('nominal')
+                ->required()
+                ->numeric()
+                ->placeholder(0),
+        ]);
     }
 
     public function table(Table $table): Table
@@ -29,7 +48,30 @@ class TransactionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Hotel Transactions')
             ->columns([
-                Tables\Columns\TextColumn::make('Hotel Transactions'),
+                Tables\Columns\TextColumn::make('member.name')
+                    ->label('Member')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('hotel.name')
+                    ->label('Hotel')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('nominal')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -15,8 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-use Filament\Support\RawJs;
-use Illuminate\Support\Facades\Log;
 
 
 class MembersResource extends Resource
@@ -36,10 +34,12 @@ class MembersResource extends Resource
             (floatval(str_replace(',', '', $get('nominal_other'))) ?? 0);
         $set('total_nominal', $total);
 
+        $tier = self::$model::getTierOptions($total);
+
         $point = $total / 100000;
         $set('poin', floor($point));
         $set('reward', ceil($point * 100));
-
+        $set('tier', $tier['id']);
     }
 
 

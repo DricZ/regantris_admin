@@ -18,9 +18,28 @@ class TransactionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('Member Transactions')
+                Forms\Components\Select::make('member_id')
+                    ->relationship('member', 'name')
+                    ->default($this->getOwnerRecord()->id)
+                    ->disabled()
+                    ->required(),
+                Forms\Components\Select::make('hotel_id')
+                    ->relationship('hotel', 'name')
+                    ->required(),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'room' => 'Room',
+                        'fnb' => 'Resto',
+                        'laundry' => 'Laundry',
+                        'transport' => 'Transport',
+                        'spa' => 'Spa',
+                        'other' => 'Other',
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('nominal')
                     ->required()
-                    ->maxLength(255),
+                    ->numeric()
+                    ->placeholder(0),
             ]);
     }
 
@@ -29,7 +48,30 @@ class TransactionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Member Transactions')
             ->columns([
-                Tables\Columns\TextColumn::make('Member Transactions'),
+                Tables\Columns\TextColumn::make('member.name')
+                    ->label('Member')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('hotel.name')
+                    ->label('Hotel')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('nominal')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
