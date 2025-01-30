@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Hotels extends Model
 {
-    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity;
 
     protected $table = 'hotels';
 
@@ -22,6 +24,15 @@ class Hotels extends Model
      */
     protected $guarded = [];
     //
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logAll()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
+
 
     /**
      * Get all of the transactions for the Hotels
