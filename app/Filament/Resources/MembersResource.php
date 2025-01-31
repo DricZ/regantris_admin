@@ -15,7 +15,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-
+use App\Filament\Exports\MembersExporter;
+use Filament\Tables\Actions\ExportAction;
 
 class MembersResource extends Resource
 {
@@ -222,6 +223,12 @@ class MembersResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Export Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(MembersExporter::class)
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Exports\HotelsExporter;
+use Filament\Tables\Actions\ExportAction;
 
 class HotelsResource extends Resource
 {
@@ -59,6 +61,12 @@ class HotelsResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Export Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(HotelsExporter::class)
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -92,4 +100,5 @@ class HotelsResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
 }
