@@ -38,7 +38,8 @@ class TransactionsRelationManager extends RelationManager
                 ->required(),
             Forms\Components\TextInput::make('nominal')
                 ->required()
-                ->numeric()
+                ->prefix('Rp. ')
+                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->placeholder(0),
         ]);
     }
@@ -58,6 +59,7 @@ class TransactionsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('nominal')
+                    ->prefix('Rp. ')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
