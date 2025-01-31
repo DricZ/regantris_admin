@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TransactionsResource\Pages;
 use App\Filament\Resources\TransactionsResource\RelationManagers;
 use App\Models\Transactions;
+use App\Models\Members;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Forms\Components\QrScanner;
+use Filament\Forms\Set;
 
 class TransactionsResource extends Resource
 {
@@ -23,9 +26,25 @@ class TransactionsResource extends Resource
     {
         return $form
             ->schema([
+                QrScanner::make('member_code')
+                    ->label('Scan Member QR Code')
+                    ->reactive()
+                    ->dehydrated(false)
+                    ->afterStateUpdated(function ($state, Set $set) {
+                        $member = Members::where('code', $state)->first();
+                        if ($member) {
+                            $set('member_id', $member->id);
+                        }
+                    })
+                    ->rules(['exists:members,code'])
+                    ->validationMessages([
+                        'exists' => 'Invalid QR code. Member not found.',
+                    ]),
+
                 Forms\Components\Select::make('member_id')
+                    ->required()
                     ->relationship('member', 'name')
-                    ->required(),
+                    ->rules(['exists:members,id']),
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
                     ->required(),
