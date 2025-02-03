@@ -40,7 +40,7 @@ class MembersResource extends Resource
         $point = $total / 100000;
         $set('poin', floor($point));
         $set('reward', ceil($point * 100));
-        $set('tier', $tier['id']);
+        $set('tier', $tier['name'] ?? "Urban");
     }
 
 
@@ -141,12 +141,12 @@ class MembersResource extends Resource
             Forms\Components\Select::make('tier')
                 ->label('Tier')
                 ->options([
-                    "Urban",
-                    "City Slicker",
-                    "Metropolis",
-                    "Explorer",
+                    "Urban" => "Urban",
+                    "City Slicker" => "City Slicker",
+                    "Metropolis" => "Metropolis",
+                    "Explorer" => "Explorer",
                 ])
-                ->default(0)
+                ->default("Urban")
                 ->disabled(),
         ]);
     }
@@ -203,7 +203,8 @@ class MembersResource extends Resource
                     ->prefix('Rp. ')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tier'),
+                Tables\Columns\TextColumn::make('tier')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('transactions_count')->counts('transactions'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -222,6 +223,7 @@ class MembersResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
@@ -251,6 +253,7 @@ class MembersResource extends Resource
         return [
             'index' => Pages\ListMembers::route('/'),
             'create' => Pages\CreateMembers::route('/create'),
+            'view' => Pages\ViewMembers::route('/{record}'),
             'edit' => Pages\EditMembers::route('/{record}/edit'),
         ];
     }

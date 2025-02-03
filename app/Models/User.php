@@ -6,6 +6,7 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -62,5 +63,10 @@ class User extends Authenticatable
     public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotels::class, 'hotel_id');
+    }
+
+    public function activity_log(): HasMany
+    {
+        return $this->HasMany(ActivityLog::class, 'causer_id');
     }
 }

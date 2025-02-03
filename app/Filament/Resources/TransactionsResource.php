@@ -22,7 +22,7 @@ class TransactionsResource extends Resource
 {
     protected static ?string $model = Transactions::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     public static function form(Form $form): Form
     {
@@ -102,6 +102,7 @@ class TransactionsResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
@@ -131,6 +132,7 @@ class TransactionsResource extends Resource
         return [
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransactions::route('/create'),
+            'view' => Pages\ViewTransactions::route('/{record}'),
             'edit' => Pages\EditTransactions::route('/{record}/edit'),
         ];
     }

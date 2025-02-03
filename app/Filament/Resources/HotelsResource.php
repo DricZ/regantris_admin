@@ -19,7 +19,9 @@ class HotelsResource extends Resource
 {
     protected static ?string $model = Hotels::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Master';
+
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
     public static function form(Form $form): Form
     {
@@ -59,6 +61,7 @@ class HotelsResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
@@ -90,6 +93,7 @@ class HotelsResource extends Resource
             'index' => Pages\ListHotels::route('/'),
             'create' => Pages\CreateHotels::route('/create'),
             'edit' => Pages\EditHotels::route('/{record}/edit'),
+            'view' => Pages\ViewHotels::route('/{record}'),
         ];
     }
 

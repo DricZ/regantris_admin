@@ -55,7 +55,7 @@ class Members extends Model
         }else{
             return [
                 'id' => 3,
-                'name' => "Metropolis",
+                'name' => "Explorer",
                 'rate' => .2
             ];
         }
@@ -78,10 +78,6 @@ class Members extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transactions::class, 'member_id', 'id');
-    }
-
-    public function tier($points){
-
     }
 
 }
