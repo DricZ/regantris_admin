@@ -18,7 +18,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity, HasRoles, HasSuperAdmin;
 
     /**
      * The attributes that are mass assignable.

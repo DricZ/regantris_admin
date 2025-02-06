@@ -53,10 +53,6 @@ class TransactionsRelationManager extends RelationManager
                     ->label('Member')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('hotel.name')
-                    ->label('Hotel')
-                    ->sortable()
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('nominal')
                     ->prefix('Rp. ')

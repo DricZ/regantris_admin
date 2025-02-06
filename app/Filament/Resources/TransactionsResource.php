@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Forms\Components\QrScanner;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ExportAction;
+use League\Flysystem\Visibility;
 
 class TransactionsResource extends Resource
 {
@@ -26,6 +27,18 @@ class TransactionsResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // Cek apakah user memiliki permission untuk memilih hotel dan type
+        $canSelect = auth()->user()->can('transaction.select.hotel_and_type') || auth()->user()->roles()->first()->type == 'super';
+
+        // Jika user tidak memiliki permission untuk memilih type, ambil nilai dari kolom type di role.
+        // Asumsi user hanya memiliki satu role.
+        $defaultType = null;
+        if (!$canSelect) {
+            $role = auth()->user()->roles()->first();
+            // Pastikan role ada dan kolom 'type' tersedia di tabel role (misal sudah ditambahkan kolom custom)
+            $defaultType = $role ? $role->type : null;
+        }
+
         return $form
             ->schema([
                 QrScanner::make('member_code')
@@ -46,10 +59,15 @@ class TransactionsResource extends Resource
                 Forms\Components\Select::make('member_id')
                     ->required()
                     ->relationship('member', 'name')
-                    ->rules(['exists:members,id']),
+                    ->rules(['exists:members,id'])
+                    ->disabled(!$canSelect),
+                // Field Hotel: jika user tidak punya permission, default ambil hotel_id dari user dan disable input-nya.
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
-                    ->required(),
+                    ->required()
+                    ->default(fn() => !$canSelect ? auth()->user()->hotel_id : null)
+                    ->disabled(fn() => !$canSelect)
+                    ->visible(fn() => $canSelect),
                 Forms\Components\Select::make('type')
                     ->options([
                         'room' => 'Room',
@@ -59,7 +77,10 @@ class TransactionsResource extends Resource
                         'spa' => 'Spa',
                         'other' => 'Other',
                     ])
-                    ->required(),
+                    ->required()
+                    ->default(fn() => !$canSelect ? $defaultType : 'other')
+                    ->disabled(fn() => !$canSelect)
+                    ->visible(fn() => $canSelect),
                 Forms\Components\TextInput::make('nominal')
                     ->required()
                     ->prefix('Rp. ')
