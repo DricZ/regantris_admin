@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Silber\Bouncer\BouncerFacade as Bouncer;
+use Silber\Bouncer\Database\Ability;
 
 class UserResource extends Resource
 {
@@ -32,6 +34,8 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                // Field multi-select untuk memilih hak akses (abilities)
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name'),
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
                     ->required(),
