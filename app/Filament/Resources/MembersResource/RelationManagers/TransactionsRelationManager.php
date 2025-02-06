@@ -49,10 +49,6 @@ class TransactionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Member Transactions')
             ->columns([
-                Tables\Columns\TextColumn::make('member.name')
-                    ->label('Member')
-                    ->sortable()
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('hotel.name')
                     ->label('Hotel')
                     ->sortable()
@@ -79,7 +75,7 @@ class TransactionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

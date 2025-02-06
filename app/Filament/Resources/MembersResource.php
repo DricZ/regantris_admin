@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use App\Filament\Exports\MembersExporter;
 use Filament\Tables\Actions\ExportAction;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class MembersResource extends Resource
 {
@@ -46,21 +47,31 @@ class MembersResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $uuid = Str::uuid()->toString();
 
     return $form
         ->schema([
             Forms\Components\TextInput::make('code')
                 ->required()
                 ->maxLength(100)
-                ->default(Str::uuid()->toString()),
+                ->placeholder($uuid)
+                ->default($uuid),
 
             Forms\Components\TextInput::make('name')
+                ->placeholder("John Doe")
+                ->required(),
+
+            Forms\Components\TextInput::make('email')
                 ->required()
-                ->maxLength(100),
+                ->placeholder("example@gmail.com")
+                ->email(),
+
+            PhoneInput::make('phone_number'),
 
             Forms\Components\TextInput::make('nominal_room')
                 ->label('Nominal Room')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->live()
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
@@ -71,6 +82,7 @@ class MembersResource extends Resource
             Forms\Components\TextInput::make('nominal_resto')
                 ->label('Nominal Resto')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->live()
@@ -81,6 +93,7 @@ class MembersResource extends Resource
             Forms\Components\TextInput::make('nominal_laundry')
                 ->label('Nominal Laundry')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->live()
@@ -91,6 +104,7 @@ class MembersResource extends Resource
             Forms\Components\TextInput::make('nominal_transport')
                 ->label('Nominal Transport')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->live()
@@ -101,6 +115,7 @@ class MembersResource extends Resource
             Forms\Components\TextInput::make('nominal_spa')
                 ->label('Nominal Spa')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->live()
@@ -111,6 +126,7 @@ class MembersResource extends Resource
             Forms\Components\TextInput::make('nominal_other')
                 ->label('Nominal Other')
                 ->placeholder('0')
+                ->default(0)
                 ->prefix('Rp. ')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                 ->live()
@@ -156,8 +172,16 @@ class MembersResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('phone_number')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nominal_room')
                     ->numeric()

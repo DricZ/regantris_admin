@@ -27,7 +27,10 @@ class UserRelationManager extends RelationManager
                     ->maxLength(255),
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
+                    ->default($this->getOwnerRecord()->id)
+                    ->disabled()
                     ->required(),
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name'),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
@@ -45,6 +48,9 @@ class UserRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
