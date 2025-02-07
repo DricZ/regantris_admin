@@ -18,6 +18,10 @@ class MembersExporter extends Exporter
                 ->label('ID'),
             ExportColumn::make('code')
                 ->label('Kode Member'),
+            ExportColumn::make('email')
+                ->label('Email'),
+            ExportColumn::make('phone_number')
+                ->label('Phone Number'),
             ExportColumn::make('name')
                 ->label('Nama'),
             ExportColumn::make('nominal_room')

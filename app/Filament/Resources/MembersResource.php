@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use App\Filament\Exports\MembersExporter;
-use Filament\Tables\Actions\ExportAction;
+use App\Filament\Imports\MembersImporter;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class MembersResource extends Resource
@@ -251,10 +251,14 @@ class MembersResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
-                ExportAction::make()
+                Tables\Actions\ExportAction::make()
                     ->label('Export Excel')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->exporter(MembersExporter::class)
+                    ->exporter(MembersExporter::class),
+                Tables\Actions\ImportAction::make()
+                    ->label('Import Excel')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->importer(MembersImporter::class),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
