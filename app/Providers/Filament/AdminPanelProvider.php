@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Forms\Components\QrScanner;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use Rupadana\ApiService\ApiServicePlugin;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -60,8 +61,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugin(
-                FilamentSpatieRolesPermissionsPlugin::make()
-            );
+            ->plugins([
+                FilamentSpatieRolesPermissionsPlugin::make(),
+                ApiServicePlugin::make(),
+
+            ]);
     }
 }

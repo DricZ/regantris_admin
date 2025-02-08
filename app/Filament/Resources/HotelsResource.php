@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Exports\HotelsExporter;
 use Filament\Tables\Actions\ExportAction;
+use Illuminate\Support\Str;
 
 class HotelsResource extends Resource
 {
@@ -25,8 +26,15 @@ class HotelsResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $uuid = Str::uuid()->toString();
+
         return $form
             ->schema([
+                Forms\Components\TextInput::make('code')
+                    ->required()
+                    ->maxLength(100)
+                    ->placeholder($uuid)
+                    ->default($uuid),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -40,10 +48,15 @@ class HotelsResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('code')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

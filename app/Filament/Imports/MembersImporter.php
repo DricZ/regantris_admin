@@ -25,7 +25,7 @@ class MembersImporter extends Importer
             ImportColumn::make('phone_number')
                 ->requiredMapping()
                 ->rules(['required'])
-                ->label(label: 'Phone Number'),
+                ->label('Phone Number'),
             ImportColumn::make('name')
                 ->requiredMapping()
                 ->rules(['required'])

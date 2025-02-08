@@ -8,6 +8,7 @@ use App\Models\Transactions;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Validation\Rule;
 
 class TransactionsImporter extends Importer
 {
@@ -16,23 +17,19 @@ class TransactionsImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('member_code') // Kolom CSV untuk kode member
+            ImportColumn::make('member') // Kolom CSV untuk kode member
                 ->requiredMapping()
                 ->label('Kode Member')
                 ->rules(['required', 'exists:members,code'])
-                ->resolveUsing(function ($state) {
-                    return Members::where('code', $state)->first()?->id;
-                }),
+                ->relationship(resolveUsing: 'code'),
 
-            ImportColumn::make('hotel_code') // Kolom CSV untuk kode hotel
+            ImportColumn::make('hotel') // Kolom CSV untuk kode hotel
                 ->requiredMapping()
                 ->label('Kode Hotel')
                 ->rules(['required', 'exists:hotels,code'])
-                ->resolveUsing(function ($state) {
-                    return Hotels::where('code', $state)->first()?->id;
-                }),
-
-            ImportColumn::make('type'),
+                ->relationship(resolveUsing: 'code'),
+            ImportColumn::make('type')
+                ->rules(['required', 'string', Rule::in(['room', 'fnb', 'laundry', 'transport', 'spa', 'other'])]),
             ImportColumn::make('nominal')
                 ->requiredMapping()
                 ->numeric()
@@ -42,18 +39,9 @@ class TransactionsImporter extends Importer
 
     public function resolveRecord(): ?Transactions
     {
-        // Cari member dan hotel berdasarkan kode
-        $memberId = Members::where('code', $this->data['member_code'])->first()?->id;
-        $hotelId = Hotels::where('code', $this->data['hotel_code'])->first()?->id;
-
-        // Jika kode tidak valid, skip row
-        if (!$memberId || !$hotelId) {
-            return null;
-        }
-
         return new Transactions([
-            'member_id' => $memberId,
-            'hotel_id' => $hotelId,
+            'member_id' => $this->data['member'],
+            'hotel_id' => $this->data['hotel'],
             'type' => $this->data['type'],
             'nominal' => $this->data['nominal'],
         ]);
