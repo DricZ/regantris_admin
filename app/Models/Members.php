@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -79,5 +80,18 @@ class Members extends Model
     {
         return $this->hasMany(Transactions::class, 'member_id', 'id');
     }
+
+    public function redeemLogs(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            RedeemLog::class,
+            Transactions::class,
+            'member_id', // Foreign key di transactions table
+            'transaction_id', // Foreign key di redeem_logs table
+            'id', // Local key di members table
+            'id' // Local key di transactions table
+        );
+    }
+
 
 }

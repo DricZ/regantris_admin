@@ -25,6 +25,8 @@ class MembersResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Master';
+
     public static function updateTotalNominal($set, $get): void
     {
         $total =
@@ -273,6 +275,7 @@ class MembersResource extends Resource
     {
         return [
             RelationManagers\TransactionsRelationManager::class,
+            RelationManagers\RedeemLogRelationManager::class,
         ];
     }
 

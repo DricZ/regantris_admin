@@ -10,17 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use App\Observers\TransactionsObserver;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[ObservedBy([TransactionsObserver::class])]
-class Transactions extends Model
+class RedeemLog extends Model
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity;
 
-    protected $table = 'transactions';
+    protected $table = 'redeem_log';
 
     /**
      * The attributes that are mass assignable.
@@ -42,24 +37,8 @@ class Transactions extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function hotel(): BelongsTo
+    public function transaction(): BelongsTo
     {
-        return $this->belongsTo(Hotels::class, 'hotel_id');
+        return $this->belongsTo(Transactions::class, 'transaction_id');
     }
-
-    /**
-     * Get the members that owns the Transactions
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function member(): BelongsTo
-    {
-        return $this->belongsTo(Members::class, 'member_id');
-    }
-
-    public function redeemLog(): HasOne
-    {
-        return $this->hasOne(RedeemLog::class, 'transaction_id');
-    }
-
 }

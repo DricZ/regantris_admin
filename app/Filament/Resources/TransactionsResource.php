@@ -46,6 +46,7 @@ class TransactionsResource extends Resource
                     ->label('Scan Member QR Code')
                     ->reactive()
                     ->dehydrated(false)
+                    ->hiddenOn('view') // This field will be hidden on view pages.
                     ->afterStateUpdated(function ($state, Set $set) {
                         $member = Members::where('code', $state)->first();
                         if ($member) {
@@ -94,6 +95,9 @@ class TransactionsResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('code')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('member.name')
                     ->label('Member')
                     ->sortable()
@@ -149,7 +153,7 @@ class TransactionsResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\RedeemLogRelationManager::class,
         ];
     }
 
