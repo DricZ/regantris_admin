@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 use App\Policies;
 use Spatie\Permission\Models\Role;
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Role::class, Policies\RolePolicy::class);
         Gate::policy(Permission::class, Policies\PermissionPolicy::class);
+
+        Gate::before(function (User $user, string $ability) {
+            return $user->isSuperAdmin() ? true: null;
+        });
         // Gate::policy(Token::class, Policies\TokensPolicy::class);
         //
     }
