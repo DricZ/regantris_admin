@@ -44,9 +44,11 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logAll()
-        ->logOnlyDirty()
-        ->dontSubmitEmptyLogs();
+            ->logOnly(['name', 'email', 'status', 'role', 'last_login']) // Fokus ke field penting saja
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->logExcept(['updated_at', 'created_at', 'remember_token']) // Exclude field yang tidak perlu
+            ->useLogName('user_activity'); // Nama khusus untuk log
     }
 
     /**
