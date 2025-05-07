@@ -62,7 +62,7 @@ class VoucherApiController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $voucher,
-            'code' => $code['code'] ?? ''
+            'code' => $code['code'] ?? null
         ]);
     }
 
