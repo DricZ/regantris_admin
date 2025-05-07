@@ -30,4 +30,8 @@ class Promotional extends Model
         ->logOnlyDirty()
         ->dontSubmitEmptyLogs();
     }
+
+    public function voucher(){
+        return $this->belongsTo(Voucher::class);
+    }
 }

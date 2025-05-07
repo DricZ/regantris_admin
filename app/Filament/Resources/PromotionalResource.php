@@ -33,6 +33,11 @@ class PromotionalResource extends Resource
                     ->label('Deskripsi Promosional')
                     ->placeholder('Input deskription')
                     ->columnSpanFull(),
+                Forms\Components\Select::make('voucher_id')
+                    ->label('Voucher')
+                    ->relationship('voucher', 'title')
+                    ->rules(['exists:voucher,id'])
+                    ->searchable(),
                 FileUpload::make('src')
                     ->label('Image')
                     ->image()
