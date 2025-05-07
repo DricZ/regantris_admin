@@ -42,6 +42,6 @@ class Promotional extends Model
     }
 
     public function voucher(){
-        return $this->belongsTo(Voucher::class);
+        return $this->belongsTo(Voucher::class, 'voucher_id');
     }
 }
