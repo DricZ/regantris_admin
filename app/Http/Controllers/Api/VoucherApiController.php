@@ -57,7 +57,10 @@ class VoucherApiController extends Controller
         $member = Auth::guard('api')->user();
 
         if($member){
-            $code = VoucherDetail::where('member_id', $member->id)->first('code');
+            $code = VoucherDetail::
+            where('member_id', $member->id)
+            ->where('voucher_id', $id)
+            ->first('code');
         }
         return response()->json([
             'status' => 'success',
