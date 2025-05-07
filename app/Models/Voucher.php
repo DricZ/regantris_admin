@@ -26,8 +26,8 @@ class Voucher extends Model
     public function getImageUrlAttribute(): ?string
     {
         // Pastikan pakai disk yang sesuai dengan filesystem kamu (contoh: 'public')
-        return $this->image
-            ? Storage::disk('public')->url($this->image)
+        return $this->pic
+            ? Storage::disk('public')->url($this->pic)
             : null;
     }
     //
