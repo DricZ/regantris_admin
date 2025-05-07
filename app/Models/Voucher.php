@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -20,6 +21,15 @@ class Voucher extends Model
      * @var list<string>
      */
     protected $guarded = [];
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        // Pastikan pakai disk yang sesuai dengan filesystem kamu (contoh: 'public')
+        return $this->image
+            ? Storage::disk('public')->url($this->image)
+            : null;
+    }
     //
 
     public function getActivitylogOptions(): LogOptions

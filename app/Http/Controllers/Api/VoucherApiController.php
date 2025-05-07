@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VoucherResource;
 use Illuminate\Http\Request;
 use App\Models\Voucher;
 use App\Models\VoucherDetail;
@@ -27,16 +28,16 @@ class VoucherApiController extends Controller
             ->orderBy('start_date', 'desc')
             ->paginate($perPage);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $vouchers->items(),
-            'meta' => [
-                'current_page' => $vouchers->currentPage(),
-                'per_page' => $vouchers->perPage(),
-                'last_page' => $vouchers->lastPage(),
-                'total' => $vouchers->total(),
-            ],
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'data'   => VoucherResource::collection($vouchers),
+                'meta'   => [
+                    'current_page' => $vouchers->currentPage(),
+                    'per_page'     => $vouchers->perPage(),
+                    'last_page'    => $vouchers->lastPage(),
+                    'total'        => $vouchers->total(),
+                ],
+            ]);
     }
 
     /**
