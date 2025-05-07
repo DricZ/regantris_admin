@@ -107,6 +107,11 @@ class Members extends Authenticatable implements JWTSubject
         return $this->hasMany(Transactions::class, 'member_id', 'id');
     }
 
+    public function voucherDetails(): HasMany
+    {
+        return $this->hasMany(VoucherDetail::class, 'member_id', 'id');
+    }
+
     public function transactionRedeemLogs(): HasManyThrough
     {
         return $this->hasManyThrough(

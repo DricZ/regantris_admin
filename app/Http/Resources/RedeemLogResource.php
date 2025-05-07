@@ -17,19 +17,19 @@ class RedeemLogResource extends JsonResource
     public function toArray(Request $request): array
     {
         $relatedModelInfo = null;
-        if ($this->modelable instanceof Transactions) {
+        if ($this->model instanceof Transactions) {
             $relatedModelInfo = [
                 'type' => 'Transaction',
-                'id' => $this->modelable->id,
+                'id' => $this->model->id,
                 // Tambahkan detail transaksi lain jika perlu
-                // 'invoice_number' => $this->modelable->invoice_number,
+                'code' => $this->model->code, // Contoh
             ];
-        } elseif ($this->modelable instanceof VoucherDetail) {
+        } elseif ($this->model instanceof VoucherDetail) {
             $relatedModelInfo = [
                 'type' => 'VoucherDetail',
-                'id' => $this->modelable->id,
+                'id' => $this->model->id,
                 // Tambahkan detail voucher lain jika perlu
-                // 'voucher_code' => $this->modelable->voucher->code, // Contoh
+                'code' => $this->model->code, // Contoh
             ];
         }
 
