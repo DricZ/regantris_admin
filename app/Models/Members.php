@@ -130,4 +130,39 @@ class Members extends Authenticatable implements JWTSubject
             'id'                     // Local key di tabel 'voucher_details' (voucher_details.id)
         )->where('redeem_log.model_type', VoucherDetail::class); // Filter hanya untuk tipe VoucherDetail
     }
+
+     /**
+     * Accessor untuk mendapatkan semua redeem log milik member.
+     * Menggabungkan log dari transaksi dan voucher.
+     */
+    public function getAllRedeemLogsAttribute()
+    {
+        $transactionLogs = $this->transactionRedeemLogs()->latest()->get();
+        $voucherLogs = $this->voucherDetailRedeemLogs()->latest()->get(); // Asumsi relasi ini valid
+
+        return $transactionLogs->merge($voucherLogs)->sortByDesc('created_at');
+    }
+
+    /**
+     * Method alternatif untuk mengambil semua redeem logs dengan paginasi (lebih efisien untuk dataset besar).
+     * Membutuhkan relasi langsung Member ke Transaction dan Member ke VoucherDetail.
+     */
+    public function getPaginatedRedeemLogs(int $perPage = 15)
+    {
+        // Ambil ID dari transactions dan voucher_details milik member ini
+        $transactionIds = $this->transactions()->pluck('id');
+        $voucherDetailIds = $this->voucherDetails()->pluck('id'); // Membutuhkan relasi voucherDetails()
+
+        return RedeemLog::query()
+            ->where(function ($query) use ($transactionIds) {
+                $query->where('model_type', Transactions::class)
+                      ->whereIn('model_id', $transactionIds);
+            })
+            ->orWhere(function ($query) use ($voucherDetailIds) {
+                $query->where('model_type', VoucherDetail::class)
+                      ->whereIn('model_id', $voucherDetailIds);
+            })
+            ->latest() // Urutkan berdasarkan terbaru
+            ->paginate($perPage);
+    }
 }

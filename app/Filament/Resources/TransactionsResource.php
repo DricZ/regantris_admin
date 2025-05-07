@@ -57,12 +57,17 @@ class TransactionsResource extends Resource
                     ->validationMessages([
                         'exists' => 'Invalid QR code. Member not found.',
                     ]),
-
+                Forms\Components\Select::make('member_id')
+                    ->required()
+                    ->label('Phone Number')
+                    ->relationship('member', 'phone_number')
+                    ->rules(['exists:members,id'])
+                    // ->disabled(!$canSelect)
+                    ->searchable(),
                 Forms\Components\Select::make('member_id')
                     ->required()
                     ->relationship('member', 'name')
-                    ->rules(['exists:members,id'])
-                    ->disabled(!$canSelect),
+                    ->disabled(),
                 // Field Hotel: jika user tidak punya permission, default ambil hotel_id dari user dan disable input-nya.
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')

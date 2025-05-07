@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Members;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MembersController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
