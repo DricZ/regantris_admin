@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MemberRedeemLogController;
+use App\Http\Controllers\Api\PromotionalApiController;
 use App\Http\Controllers\Api\VoucherApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/vouchers', [VoucherApiController::class, 'index']);
+Route::get('/promotionals', [PromotionalApiController::class, 'index']);
 Route::get('/vouchers/{id}', [VoucherApiController::class, 'show']);
