@@ -35,7 +35,7 @@ class PromotionalResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\Select::make('voucher_id')
                     ->label('Voucher')
-                    ->relationship('voucher', 'title')
+                    ->relationship('vouchers', 'title')
                     ->rules(['exists:voucher,id'])
                     ->searchable(),
                 FileUpload::make('src')
