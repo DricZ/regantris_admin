@@ -41,7 +41,10 @@ class PromotionalResource extends Resource
                 FileUpload::make('src')
                     ->label('Image')
                     ->image()
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9'
+                    ]),
                 Forms\Components\TextInput::make('order')
                     ->placeholder('Order promotional')
                     ->required()
