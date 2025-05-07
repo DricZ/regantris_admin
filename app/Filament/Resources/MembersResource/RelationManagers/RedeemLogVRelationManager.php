@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\TransactionsResource\RelationManagers;
+namespace App\Filament\Resources\MembersResource\RelationManagers;
 
+use App\Models\Transactions;
+use App\Models\VoucherDetail;
 use Filament\Forms;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -11,9 +14,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
-class RedeemLogRelationManager extends RelationManager
+class RedeemLogVRelationManager extends RelationManager
 {
-    protected static string $relationship = 'redeemLogs';
+    protected static string $relationship = 'voucherDetailRedeemLogs';
 
     public function form(Form $form): Form
     {
@@ -25,6 +28,16 @@ class RedeemLogRelationManager extends RelationManager
                     ->maxLength(100)
                     ->placeholder($uuid)
                     ->default($uuid),
+                MorphToSelect::make('model')
+                    ->label('Model Terkait')
+                    ->types([
+                        MorphToSelect\Type::make(VoucherDetail::class)
+                            ->titleAttribute('code') // Misalnya, jika VoucherDetail punya atribut 'code' yang unik
+                            ->label('Detail Voucher')
+                            // ->getOptionLabelFromRecordUsing(fn (VoucherDetail $record): string => "Voucher Code: {$record->code}")
+                    ])
+                    ->required()
+                    ->searchable(),
                 Forms\Components\TextInput::make('use_poin')
                     ->required()
                     ->numeric(),
@@ -43,8 +56,9 @@ class RedeemLogRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('model.transaction.member.name')
+                Tables\Columns\TextColumn::make('model.code')
                     ->numeric()
+                    ->label('Voucher Code')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('use_poin')
                     ->numeric()

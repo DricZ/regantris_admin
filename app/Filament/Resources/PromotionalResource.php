@@ -6,6 +6,7 @@ use App\Filament\Resources\PromotionalResource\Pages;
 use App\Filament\Resources\PromotionalResource\RelationManagers;
 use App\Models\Promotional;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -25,14 +26,19 @@ class PromotionalResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->placeholder('Input nama promotional')
                     ->maxLength(255),
                 Forms\Components\Textarea::make('desc')
                     ->required()
+                    ->label('Deskripsi Promosional')
+                    ->placeholder('Input deskription')
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('src')
-                    ->required()
-                    ->columnSpanFull(),
+                FileUpload::make('src')
+                    ->label('Image')
+                    ->image()
+                    ->imageEditor(),
                 Forms\Components\TextInput::make('order')
+                    ->placeholder('Order promotional')
                     ->required()
                     ->numeric(),
             ]);
@@ -87,5 +93,13 @@ class PromotionalResource extends Resource
             'create' => Pages\CreatePromotional::route('/create'),
             'edit' => Pages\EditPromotional::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

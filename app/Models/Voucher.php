@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class RedeemLog extends Model
+class Voucher extends Model
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity;
-
-    protected $table = 'redeem_log';
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +20,7 @@ class RedeemLog extends Model
      * @var list<string>
      */
     protected $guarded = [];
+    //
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -32,13 +30,19 @@ class RedeemLog extends Model
         ->dontSubmitEmptyLogs();
     }
 
+
     /**
-     * Get the hotels that owns the Transactions
+     * Get all of the transactions for the Hotels
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function model()
+    public function voucherDetails()
     {
-        return $this->morphTo();
+        return $this->hasMany(VoucherDetail::class);
+    }
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotels::class);
     }
 }

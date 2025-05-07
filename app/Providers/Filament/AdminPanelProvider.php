@@ -67,4 +67,9 @@ class AdminPanelProvider extends PanelProvider
 
             ]);
     }
+
+    public static function getUserModel(): string
+    {
+        return \App\Models\Members::class;
+    }
 }

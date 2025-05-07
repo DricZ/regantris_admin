@@ -57,9 +57,9 @@ class Transactions extends Model
         return $this->belongsTo(Members::class, 'member_id');
     }
 
-    public function redeemLog(): HasOne
+    public function redeemLogs()
     {
-        return $this->hasOne(RedeemLog::class, 'transaction_id');
+        return $this->morphMany(RedeemLog::class, 'model');
     }
 
 }

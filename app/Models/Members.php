@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Members extends Model
+class Members extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, LogsActivity, CanResetPassword;
 
     protected $table = 'members';
 
@@ -25,6 +28,29 @@ class Members extends Model
      * @var list<string>
      */
     protected $guarded = [];
+
+    protected $hidden = [
+        'password','remember_token',
+    ];
+
+    /**
+     * Method dari JWTSubject.
+     * Mengembalikan identifier unik untuk JWT (biasanya primary key).
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Method dari JWTSubject.
+     * Tambahkan claim custom jika perlu (misal role),
+     * atau kembalikan array kosong.
+     */
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -81,17 +107,27 @@ class Members extends Model
         return $this->hasMany(Transactions::class, 'member_id', 'id');
     }
 
-    public function redeemLogs(): HasManyThrough
+    public function transactionRedeemLogs(): HasManyThrough
     {
         return $this->hasManyThrough(
-            RedeemLog::class,
-            Transactions::class,
-            'member_id', // Foreign key di transactions table
-            'transaction_id', // Foreign key di redeem_logs table
-            'id', // Local key di members table
-            'id' // Local key di transactions table
-        );
+            RedeemLog::class,    // Model tujuan akhir
+            Transactions::class,  // Model perantara
+            'member_id',         // Foreign key di tabel 'Transactionss' (Transactionss.member_id)
+            'model_id',          // Foreign key di tabel 'redeem_logs' (redeem_logs.model_id)
+            'id',                // Local key di tabel 'members' (members.id)
+            'id'                 // Local key di tabel 'Transactionss' (Transactionss.id)
+        )->where('redeem_log.model_type', Transactions::class); // Filter hanya untuk tipe Transactions
     }
 
-
+    public function voucherDetailRedeemLogs(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            RedeemLog::class,        // Model tujuan akhir
+            VoucherDetail::class,    // Model perantara
+            'member_id',             // Foreign key di tabel 'voucher_details' (voucher_details.member_id) - ASUMSI
+            'model_id',              // Foreign key di tabel 'redeem_logs' (redeem_logs.model_id)
+            'id',                    // Local key di tabel 'members' (members.id)
+            'id'                     // Local key di tabel 'voucher_details' (voucher_details.id)
+        )->where('redeem_log.model_type', VoucherDetail::class); // Filter hanya untuk tipe VoucherDetail
+    }
 }

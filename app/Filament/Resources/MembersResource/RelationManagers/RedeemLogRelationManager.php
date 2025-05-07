@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\MembersResource\RelationManagers;
 
+use App\Models\Transactions;
+use App\Models\VoucherDetail;
 use Filament\Forms;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -13,7 +16,7 @@ use Illuminate\Support\Str;
 
 class RedeemLogRelationManager extends RelationManager
 {
-    protected static string $relationship = 'redeemLogs';
+    protected static string $relationship = 'transactionRedeemLogs';
 
     public function form(Form $form): Form
     {
@@ -25,9 +28,21 @@ class RedeemLogRelationManager extends RelationManager
                     ->maxLength(100)
                     ->placeholder($uuid)
                     ->default($uuid),
-                Forms\Components\Select::make('transaction_id')
-                    ->relationship('transaction', 'id')
-                    ->required(),
+                MorphToSelect::make('model')
+                    ->label('Model Terkait')
+                    ->types([
+                        MorphToSelect\Type::make(Transactions::class)
+                            ->titleAttribute('code') // Atribut yang akan ditampilkan di select setelah tipe dipilih
+                            ->label('Transaksi')
+                            // Anda bisa menambahkan search Debounce jika daftar transaksinya banyak
+                            // ->searchable()
+                            // ->searchDebounce(500)
+                            // Anda bisa menggunakan getOptionLabelFromRecordUsing jika perlu format yang lebih kompleks
+                            // ->getOptionLabelFromRecordUsing(fn (Transaction $record): string => "Transaksi ID: {$record->id} - User: {$record->user->name}")
+                            ,
+                    ])
+                    ->required()
+                    ->searchable(),
                 Forms\Components\TextInput::make('use_poin')
                     ->required()
                     ->numeric(),
@@ -46,8 +61,9 @@ class RedeemLogRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('transaction.code')
+                Tables\Columns\TextColumn::make('model.code')
                     ->numeric()
+                    ->label('Transaction Code')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('use_poin')
                     ->numeric()

@@ -276,6 +276,7 @@ class MembersResource extends Resource
         return [
             RelationManagers\TransactionsRelationManager::class,
             RelationManagers\RedeemLogRelationManager::class,
+            RelationManagers\RedeemLogVRelationManager::class,
         ];
     }
 

@@ -5,7 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\RedeemLogResource\Pages;
 use App\Filament\Resources\RedeemLogResource\RelationManagers;
 use App\Models\RedeemLog;
+use App\Models\Transactions;
+use App\Models\VoucherDetail;
 use Filament\Forms;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -32,9 +35,25 @@ class RedeemLogResource extends Resource
                     ->maxLength(100)
                     ->placeholder($uuid)
                     ->default($uuid),
-                Forms\Components\Select::make('transaction_id')
-                    ->relationship('transaction', 'id')
-                    ->required(),
+                MorphToSelect::make('model')
+                    ->label('Model Terkait')
+                    ->types([
+                        MorphToSelect\Type::make(Transactions::class)
+                            ->titleAttribute('code') // Atribut yang akan ditampilkan di select setelah tipe dipilih
+                            ->label('Transaksi')
+                            // Anda bisa menambahkan search Debounce jika daftar transaksinya banyak
+                            // ->searchable()
+                            // ->searchDebounce(500)
+                            // Anda bisa menggunakan getOptionLabelFromRecordUsing jika perlu format yang lebih kompleks
+                            // ->getOptionLabelFromRecordUsing(fn (Transaction $record): string => "Transaksi ID: {$record->id} - User: {$record->user->name}")
+                            ,
+                        MorphToSelect\Type::make(VoucherDetail::class)
+                            ->titleAttribute('code') // Misalnya, jika VoucherDetail punya atribut 'code' yang unik
+                            ->label('Detail Voucher')
+                            // ->getOptionLabelFromRecordUsing(fn (VoucherDetail $record): string => "Voucher Code: {$record->code}")
+                    ])
+                    ->required()
+                    ->searchable(),
                 Forms\Components\TextInput::make('use_poin')
                     ->required()
                     ->numeric(),
@@ -52,12 +71,18 @@ class RedeemLogResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('transaction.code')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('transaction.member.name')
-                    ->numeric()
-                    ->sortable(),
+                // Kolom untuk menampilkan Tipe Parent
+                Tables\Columns\TextColumn::make('model_type')
+                    ->label('Tipe Terkait')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        Transactions::class => 'Transaction',
+                        VoucherDetail::class => 'Voucher',
+                        default => $state, // Jika ada tipe lain
+                    }),
+
+                // Kolom untuk menampilkan ID Parent dan opsional detail lain
+                Tables\Columns\TextColumn::make('model.id') // Mengakses relasi 'model' dan menampilkan 'id'-nya
+                    ->label('ID Terkait'),
                 Tables\Columns\TextColumn::make('use_poin')
                     ->numeric()
                     ->sortable(),
