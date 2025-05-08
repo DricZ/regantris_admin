@@ -72,7 +72,6 @@ class TransactionsResource extends Resource
                     ->dehydrated(false)
                     ->hiddenOn('view')
                     ->options(fn () => Members::pluck('phone_number', 'phone_number')->toArray())
-                    ->default(fn ($get, $record) => optional($record->member)->phone_number)
                     ->afterStateUpdated(function ($state, Forms\Set $set) {
                         $member = Members::where('phone_number', $state)->first();
                         if ($member) {
