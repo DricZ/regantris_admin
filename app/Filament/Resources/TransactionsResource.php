@@ -8,6 +8,7 @@ use App\Filament\Resources\TransactionsResource\RelationManagers;
 use App\Models\Transactions;
 use App\Models\Members;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Forms\Components\QrScanner;
 use App\Filament\Imports\TransactionsImporter;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ExportAction;
 use League\Flysystem\Visibility;
@@ -42,32 +45,63 @@ class TransactionsResource extends Resource
 
         return $form
             ->schema([
-                QrScanner::make('member_id')
-                    ->label('Scan Member QR Code')
+                // QR Scanner untuk mendapatkan member_id
+                QrScanner::make('qr_code')
+                ->label('Scan Member QR Code')
+                ->reactive()
+                ->dehydrated(false)
+                ->hiddenOn('view')
+                ->afterStateUpdated(function ($state, Set $set) {
+                    $member = Members::where('code', $state)->first();
+                    if ($member) {
+                        $set('member_id', $member->id);
+                        $set('member.name', $member->name);
+                        $set('member.phone_number', $member->phone_number);
+                    }
+                })
+                ->rules(['exists:members,code'])
+                ->validationMessages([
+                    'exists' => 'Invalid QR code. Member not found.',
+                ]),
+
+            // Input manual via Phone Number dengan Select searchable
+                Select::make('phone_input')
+                    ->label('Phone Number')
+                    ->searchable()
                     ->reactive()
                     ->dehydrated(false)
-                    ->hiddenOn('view') // This field will be hidden on view pages.
+                    ->hiddenOn('view')
+                    ->options(fn () => Members::pluck('phone_number', 'phone_number')->toArray())
                     ->afterStateUpdated(function ($state, Set $set) {
-                        $member = Members::where('code', $state)->first();
+                        $member = Members::where('phone_number', $state)->first();
                         if ($member) {
                             $set('member_id', $member->id);
+                            $set('member.name', $member->name);
+                            $set('member.phone_number', $member->phone_number);
                         }
                     })
-                    ->rules(['exists:members,code'])
+                    ->rules(['exists:members,phone_number'])
                     ->validationMessages([
-                        'exists' => 'Invalid QR code. Member not found.',
-                    ]),
-                Forms\Components\Select::make('member_id')
+                        'exists' => 'Member not found with this phone number.',
+                ]),
+
+                // Hidden field untuk member_id yang disubmit
+                Hidden::make('member_id')
                     ->required()
+                    ->dehydrateStateUsing(fn ($state) => $state)
+                    ->default(fn ($get) => $get('member_id')),
+
+                // Tampilkan nama member
+                TextInput::make('member.name')
+                    ->label('Name')
+                    ->disabled()
+                    ->dehydrated(false),
+
+                // Tampilkan phone number member
+                TextInput::make('member.phone_number')
                     ->label('Phone Number')
-                    ->relationship('member', 'phone_number')
-                    ->rules(['exists:members,id'])
-                    // ->disabled(!$canSelect)
-                    ->searchable(),
-                Forms\Components\Select::make('member_id')
-                    ->required()
-                    ->relationship('member', 'name')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(false),
                 // Field Hotel: jika user tidak punya permission, default ambil hotel_id dari user dan disable input-nya.
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
