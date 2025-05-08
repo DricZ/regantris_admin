@@ -97,22 +97,14 @@ class TransactionsResource extends Resource
                     ->disabled()
                     ->dehydrated(false)
                     ->hiddenOn('edit')
-                    ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
-                        if (!$state) {
-                            $set('display_name', optional($record->member)->name);
-                        }
-                    }),
+                    ->getStateUsing(fn ($get, $record) => $record ? optional($record->member)->name : ''),
 
                 TextInput::make('display_phone')
                     ->label('Phone Number')
                     ->disabled()
                     ->dehydrated(false)
                     ->hiddenOn('edit')
-                    ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
-                        if (!$state) {
-                            $set('display_phone', optional($record->member)->phone_number);
-                        }
-                    }),
+                    ->getStateUsing(fn ($get, $record) => $record ? optional($record->member)->phone_number : ''),
                 // Field Hotel: jika user tidak punya permission, default ambil hotel_id dari user dan disable input-nya.
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
