@@ -103,14 +103,14 @@ class VoucherApiController extends Controller
             // Update voucher_detail
             $availableDetail->update(['member_id' => $member->id, 'claimed_at' => DB::raw('NOW()')]);
 
-            $member->update(['poin' => ($member->poin - $voucher->price)]);
+            $member->update(['poin' => ($member->poin - $voucher->price), 'reward' => $member->reward - ceil($voucher->price * 100)]);
 
             // Buat redeem_log
             RedeemLog::create([
                 'model_type' => 'App\Models\VoucherDetail',
                 'model_id' => $availableDetail->id,
                 'use_poin' => $voucher->price,
-                'reward' => $voucher->price * 100,
+                'reward' => ceil($voucher->price * 100),
                 'redeemed_at' => now(),
             ]);
 
