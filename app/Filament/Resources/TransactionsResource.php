@@ -51,12 +51,12 @@ class TransactionsResource extends Resource
                 ->reactive()
                 ->dehydrated(false)
                 ->hiddenOn('view')
-                ->afterStateUpdated(function ($state, Set $set) {
+                ->afterStateUpdated(function ($state, Forms\Set $set) {
                     $member = Members::where('code', $state)->first();
                     if ($member) {
                         $set('member_id', $member->id);
-                        $set('member.name', $member->name);
-                        $set('member.phone_number', $member->phone_number);
+                        $set('display_name', $member->name);
+                        $set('display_phone', $member->phone_number);
                     }
                 })
                 ->rules(['exists:members,code'])
@@ -64,7 +64,7 @@ class TransactionsResource extends Resource
                     'exists' => 'Invalid QR code. Member not found.',
                 ]),
 
-            // Input manual via Phone Number dengan Select searchable
+                // Input manual via Phone Number dengan Select searchable
                 Select::make('phone_input')
                     ->label('Phone Number')
                     ->searchable()
@@ -72,18 +72,19 @@ class TransactionsResource extends Resource
                     ->dehydrated(false)
                     ->hiddenOn('view')
                     ->options(fn () => Members::pluck('phone_number', 'phone_number')->toArray())
-                    ->afterStateUpdated(function ($state, Set $set) {
+                    ->default(fn ($get, $record) => optional($record->member)->phone_number)
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
                         $member = Members::where('phone_number', $state)->first();
                         if ($member) {
                             $set('member_id', $member->id);
-                            $set('member.name', $member->name);
-                            $set('member.phone_number', $member->phone_number);
+                            $set('display_name', $member->name);
+                            $set('display_phone', $member->phone_number);
                         }
                     })
                     ->rules(['exists:members,phone_number'])
                     ->validationMessages([
                         'exists' => 'Member not found with this phone number.',
-                ]),
+                    ]),
 
                 // Hidden field untuk member_id yang disubmit
                 Hidden::make('member_id')
@@ -91,17 +92,28 @@ class TransactionsResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => $state)
                     ->default(fn ($get) => $get('member_id')),
 
-                // Tampilkan nama member
-                TextInput::make('member.name')
+                // Display fields (tidak disubmit)
+                TextInput::make('display_name')
                     ->label('Name')
                     ->disabled()
-                    ->dehydrated(false),
+                    ->dehydrated(false)
+                    ->hiddenOn('edit')
+                    ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
+                        if (!$state) {
+                            $set('display_name', optional($record->member)->name);
+                        }
+                    }),
 
-                // Tampilkan phone number member
-                TextInput::make('member.phone_number')
+                TextInput::make('display_phone')
                     ->label('Phone Number')
                     ->disabled()
-                    ->dehydrated(false),
+                    ->dehydrated(false)
+                    ->hiddenOn('edit')
+                    ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
+                        if (!$state) {
+                            $set('display_phone', optional($record->member)->phone_number);
+                        }
+                    }),
                 // Field Hotel: jika user tidak punya permission, default ambil hotel_id dari user dan disable input-nya.
                 Forms\Components\Select::make('hotel_id')
                     ->relationship('hotel', 'name')
