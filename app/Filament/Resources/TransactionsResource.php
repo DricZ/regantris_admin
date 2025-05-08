@@ -42,7 +42,7 @@ class TransactionsResource extends Resource
 
         return $form
             ->schema([
-                QrScanner::make('member_code')
+                QrScanner::make('member_id')
                     ->label('Scan Member QR Code')
                     ->reactive()
                     ->dehydrated(false)
