@@ -111,7 +111,6 @@ class VoucherApiController extends Controller
                 'model_id' => $availableDetail->id,
                 'use_poin' => $voucher->price,
                 'reward' => ceil($voucher->price * 100),
-                'redeemed_at' => now(),
             ]);
 
             DB::commit();
